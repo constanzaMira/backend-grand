@@ -23,3 +23,7 @@ def handle_generar_contenido(credencial_id):
 def handle_listar_contenidos_por_usuario(credencial_id):
     response, status = obtener_contenidos_por_usuario(credencial_id)
     return jsonify(response), status
+
+def handle_marcar_click(credencial_id, contenido_id):
+    response, status = marcar_contenido_como_click(credencial_id, contenido_id)
+    return jsonify(response), status

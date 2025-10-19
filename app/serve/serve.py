@@ -7,7 +7,8 @@ from app.handler.abuelo import (
 )
 from app.handler.contenido import (
     handle_generar_contenido,
-    handle_listar_contenidos_por_usuario
+    handle_listar_contenidos_por_usuario,
+    handle_marcar_click
 )
 
 # from app.service.auth import token_required
@@ -51,3 +52,9 @@ def generar_contenido(credencial_id):
 # @token_required
 def listar_contenidos_por_usuario(credencial_id):
     return handle_listar_contenidos_por_usuario(credencial_id)
+
+@routes.route("/backend/contenidos/<int:credencial_id>/<int:contenido_id>/click", methods=["PATCH", "OPTIONS"])
+@cross_origin(supports_credentials=True)
+def marcar_click(credencial_id, contenido_id):
+    return handle_marcar_click(credencial_id, contenido_id)
+

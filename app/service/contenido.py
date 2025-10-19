@@ -89,11 +89,45 @@ def obtener_contenidos_por_usuario(credencial_id):
             resultado.append({
                 "id": c.id,
                 "plataforma": c.plataforma,
-                "urls": c.urls,
-                "titulos": c.titulos,
+                "url": c.url,
+                "titulo": c.titulo,
                 "fecha_creacion": str(c.fecha_creacion)
             })
 
         return resultado, 200
+    finally:
+        db.close()
+
+def marcar_contenido_como_click(credencial_id, contenido_id):
+    db = SessionLocal()
+    try:
+        contenido = (
+            db.query(ContenidoModel)
+            .filter(
+                ContenidoModel.id == contenido_id,
+                ContenidoModel.credencial_id == credencial_id
+            )
+            .first()
+        )
+
+        if not contenido:
+            return {"error": "Contenido no encontrado para este usuario"}, 404
+
+        contenido.click = True
+        db.commit()
+
+        return {
+            "message": "Contenido marcado como clickeado correctamente",
+            "contenido": {
+                "id": contenido.id,
+                "titulo": getattr(contenido, "titulos", None),
+                "url": getattr(contenido, "urls", None),
+                "click": contenido.click
+            }
+        }, 200
+
+    except Exception as e:
+        db.rollback()
+        return {"error": f"Error al actualizar click: {str(e)}"}, 500
     finally:
         db.close()
