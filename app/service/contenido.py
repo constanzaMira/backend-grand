@@ -141,11 +141,12 @@ def generar_contenido_spotify(credencial_id, descripcion):
 
         prompt_spotify = (
             "Eres un asistente que recomienda podcasts de Spotify para adultos mayores. "
-            "Tu objetivo es analizar la descripción del usuario y sugerir títulos de podcasts "
-            "que podrían resultarle interesantes o útiles, sin incluir enlaces ni explicaciones y uno por línea. "
-            "Debes tener en cuenta los intereses, edad, experiencias de vida y temas afines a su generación, "
-            "como salud, historias, cultura, humor o aprendizaje. "
-            "Responde con 5 títulos de podcasts posibles."
+            "Analiza la descripción del usuario y sugiere exactamente 5 títulos de podcasts "
+            "que podrían resultarle interesantes o útiles. "
+            "No incluyas enlaces, explicaciones ni texto adicional. "
+            "Enumera únicamente los títulos, uno por línea, sin numeración ni viñetas. "
+            "Ten en cuenta los intereses, la edad, las experiencias de vida y los temas típicos de su generación, "
+            "como salud, bienestar, historias, cultura, humor o aprendizaje."
         )
         prompt_spotify = f"{prompt_spotify}\n\n{descripcion}\n\nResponde con 5 títulos de canciones o playlists posibles."
 
