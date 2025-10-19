@@ -138,7 +138,7 @@ def generar_contenido_spotify(credencial_id, descripcion):
 
     db = SessionLocal()
     try:
-        # 🧠 Prompt para generar títulos de podcasts (episodios)
+        # 🧠 Prompt enfocado en episodios de podcasts
         prompt_spotify = (
             "Eres un asistente que recomienda episodios de podcasts de Spotify para adultos mayores. "
             "Tu objetivo es analizar la descripción del usuario y sugerir exactamente 5 títulos de episodios de podcasts "
@@ -180,12 +180,12 @@ def generar_contenido_spotify(credencial_id, descripcion):
 
             if "episodes" in data and data["episodes"]["items"]:
                 ep = data["episodes"]["items"][0]
-                ep_id = ep["id"]
+                ep_id = ep.get("id")
                 embed_url = f"https://open.spotify.com/embed/episode/{ep_id}"
                 return {
-                    "titulo": ep["name"],
-                    "url": embed_url,  # ✅ formato embebido listo para el frontend
-                    "artista": ep["show"]["name"]
+                    "titulo": ep.get("name"),
+                    "url": embed_url,
+                    "artista": ep.get("show", {}).get("name", "Podcast")
                 }
             return None
 
