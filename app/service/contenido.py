@@ -140,14 +140,13 @@ def generar_contenido_spotify(credencial_id, descripcion):
     try:
 
         prompt_spotify = (
-            "Eres un asistente que recomienda podcasts de Spotify para adultos mayores. "
-            "Analiza la descripción del usuario y sugiere exactamente 5 títulos de podcasts "
-            "que podrían resultarle interesantes o útiles. "
-            "No incluyas enlaces, explicaciones ni texto adicional. "
-            "Enumera únicamente los títulos, uno por línea, sin numeración ni viñetas. "
-            "Ten en cuenta los intereses, la edad, las experiencias de vida y los temas típicos de su generación, "
+            "Eres un asistente que recomienda  podcasts de Spotify para adultos mayores. "
+            "Tu objetivo es analizar la descripción del usuario y sugerir exactamente 5 títulos de podcasts "
+            "que podrían gustarle, sin incluir enlaces, sin explicaciones y uno por línea. "
+            "Debes entender el gusto musical y temático del usuario, su edad, época y estilo preferido."
             "como salud, bienestar, historias, cultura, humor o aprendizaje."
         )
+
         prompt_spotify = f"{prompt_spotify}\n\n{descripcion}\n\nResponde con 5 títulos de canciones o playlists posibles."
 
         client = genai.Client(api_key=GEMINI_API_KEY)
