@@ -24,7 +24,6 @@ def crear_abuelo(credencial_id, nombre, edad=None, descripcion=None,
             "abuelo": {
                 "id": nuevo.id,
                 "nombre": nuevo.nombre,
-                "apellido": nuevo.apellido,
                 "edad": nuevo.edad,
                 "ubicacion": nuevo.ubicacion,
                 "movilidad": nuevo.movilidad
@@ -44,7 +43,6 @@ def obtener_abuelo_por_id(abuelo_id):
         return {
             "id": abuelo.id,
             "nombre": abuelo.nombre,
-            "apellido": abuelo.apellido,
             "edad": abuelo.edad,
             "descripcion": abuelo.descripcion,
             "preferencias": abuelo.preferencias,
