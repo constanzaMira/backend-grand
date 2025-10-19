@@ -49,3 +49,18 @@ def obtener_abuelo_por_id(abuelo_id):
         }, 200
     finally:
         db.close()
+
+def obtener_abuelo_por_credencial_id(credencial_id):
+    db = SessionLocal()
+    try:
+        abuelo = db.query(AbueloModel).filter(
+            AbueloModel.credencial_id == credencial_id
+        ).first()
+
+        if not abuelo:
+            return None
+
+        return abuelo
+    finally:
+        db.close()
+

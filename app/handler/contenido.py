@@ -3,6 +3,8 @@ from app.service.contenido import (
     generar_contenido_para_abuelo,
     obtener_contenidos_por_usuario,
 )
+from app.service.abuelo import obtener_abuelo_por_credencial_id
+
 
 
 def handle_generar_contenido(credencial_id):

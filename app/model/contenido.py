@@ -9,8 +9,8 @@ class ContenidoModel(Base):
     credencial_id = Column(Integer, ForeignKey("credenciales.id"), nullable=False)
     fecha_creacion = Column(DateTime, server_default=func.now())
     plataforma = Column(String, nullable=False)
-    urls = Column(String, nullable=False)
-    titulos = Column(String, nullable=False)
+    url = Column(String, nullable=False)
+    titulo = Column(String, nullable=False)
     click = Column(Boolean, nullable=False, default=False)
 
 
