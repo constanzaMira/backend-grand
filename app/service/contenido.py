@@ -147,7 +147,7 @@ def generar_contenido_spotify(credencial_id, descripcion):
             "como salud, bienestar, historias, cultura, humor o aprendizaje."
         )
 
-        prompt_spotify = f"{prompt_spotify}\n\n{descripcion}\n\nResponde con 5 títulos de canciones o playlists posibles."
+        prompt_spotify = f"{prompt_spotify}\n\n{descripcion}\n\nResponde unicamente con 5 títulos podcast posibles."
 
         client = genai.Client(api_key=GEMINI_API_KEY)
         response = client.models.generate_content(
