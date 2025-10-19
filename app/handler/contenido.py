@@ -1,20 +1,18 @@
 from flask import request, jsonify
 from app.service.contenido import (
-    crear_contenido,
+    generar_contenido_para_abuelo,
     obtener_contenidos_por_usuario,
 )
 
-def handle_crear_contenido():
+def handle_generar_contenido():
     data = request.get_json()
     credencial_id = data.get("credencial_id")
-    plataforma = data.get("plataforma")
-    urls = data.get("urls")
-    titulos = data.get("titulos")
+    descripcion = data.get("descripcion")
 
-    if not all([credencial_id, plataforma, urls]):
-        return jsonify({"error": "Faltan campos obligatorios"}), 400
+    if not all([credencial_id, descripcion]):
+        return jsonify({"error": "Faltan datos obligatorios"}), 400
 
-    response, status = crear_contenido(credencial_id, plataforma, urls, titulos)
+    response, status = generar_contenido_para_abuelo(credencial_id, descripcion)
     return jsonify(response), status
 
 

@@ -3,6 +3,11 @@ from app.serve.serve import routes
 from flask_cors import CORS
 import logging
 import secrets
+from dotenv import load_dotenv
+import os
+
+
+load_dotenv()
 
 def create_app():
     app = Flask(__name__)

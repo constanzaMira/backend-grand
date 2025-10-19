@@ -8,13 +8,12 @@ def handle_crear_abuelo():
     data = request.get_json()
     credencial_id = data.get("credencial_id")
     nombre = data.get("nombre")
-    apellido = data.get("apellido")
 
     if not all([credencial_id, nombre, apellido]):
         return jsonify({"error": "Faltan campos obligatorios"}), 400
 
     edad = data.get("edad")
-    descripcion = data.get("descripcion")
+    descripcion = data.get("descripcion") #prompt
     preferencias = data.get("preferencias")
     frecuencia_update = data.get("frecuencia_update")
     ubicacion = data.get("ubicacion")

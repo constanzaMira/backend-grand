@@ -6,7 +6,7 @@ from app.handler.abuelo import (
     handle_obtener_abuelo_por_id
 )
 from app.handler.contenido import (
-    handle_crear_contenido,
+    handle_generar_contenido,
     handle_listar_contenidos_por_usuario
 )
 
@@ -40,11 +40,11 @@ def crear_abuelo():
 def obtener_abuelo_por_id(abuelo_id):
     return handle_obtener_abuelo_por_id(abuelo_id)
 
-@routes.route("/backend/contenidos", methods=["POST", "OPTIONS"])
+@routes.route("/backend/contenidos/generar", methods=["POST", "OPTIONS"])
 @cross_origin(supports_credentials=True)
-# @token_required
-def crear_contenido():
-    return handle_crear_contenido()
+def generar_contenido():
+    return handle_generar_contenido()
+
 
 @routes.route("/backend/contenidos/<int:credencial_id>", methods=["GET", "OPTIONS"])
 @cross_origin(supports_credentials=True)

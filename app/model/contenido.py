@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, JSON, func
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, JSON, func,Boolean
 from sqlalchemy.orm import relationship
 from app.database.connections import Base
 
@@ -9,7 +9,9 @@ class ContenidoModel(Base):
     credencial_id = Column(Integer, ForeignKey("credenciales.id"), nullable=False)
     fecha_creacion = Column(DateTime, server_default=func.now())
     plataforma = Column(String, nullable=False)
-    urls = Column(JSON, nullable=False)
-    titulos = Column(JSON, nullable=True)
+    urls = Column(String, nullable=False)
+    titulos = Column(String, nullable=False)
+    click = Column(Boolean, nullable=False, default=False)
+
 
     credencial = relationship("CredencialModel", back_populates="contenidos")
