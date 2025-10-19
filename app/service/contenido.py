@@ -13,7 +13,7 @@ def generar_contenido_para_abuelo(credencial_id, descripcion):
     client = genai.Client(api_key=GEMINI_API_KEY)
     db = SessionLocal()
     try:
-        # 1️⃣ Prompt fijo + descripción del abuelo
+
         fixed_context = (
             "Eres un asistente que recomienda videos de YouTube para adultos mayores. "
             "Tu objetivo es analizar la descripción del usuario y sugerir títulos de videos "
@@ -22,7 +22,6 @@ def generar_contenido_para_abuelo(credencial_id, descripcion):
         )
         prompt = f"{fixed_context}\n\n{descripcion}\n\nResponde con 5 títulos de videos posibles."
 
-        # 2️⃣ Generar títulos con Gemini
         response = client.models.generate_content(
             model="gemini-2.0-flash",
             contents=prompt
@@ -31,7 +30,6 @@ def generar_contenido_para_abuelo(credencial_id, descripcion):
         titles_raw = response.text.strip()
         titles = [line.strip("•*- ").strip() for line in titles_raw.splitlines() if line.strip()]
 
-        # 3️⃣ Buscar cada título en YouTube
         def buscar_en_youtube(titulo):
             url = "https://www.googleapis.com/youtube/v3/search"
             params = {

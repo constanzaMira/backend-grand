@@ -40,10 +40,10 @@ def crear_abuelo():
 def obtener_abuelo_por_id(abuelo_id):
     return handle_obtener_abuelo_por_id(abuelo_id)
 
-@routes.route("/backend/contenidos/generar", methods=["POST", "OPTIONS"])
+@routes.route("/backend/contenidos/generar/<int:credencial_id>", methods=["POST", "OPTIONS"])
 @cross_origin(supports_credentials=True)
-def generar_contenido():
-    return handle_generar_contenido()
+def generar_contenido(credencial_id):
+    return handle_generar_contenido(credencial_id)
 
 
 @routes.route("/backend/contenidos/<int:credencial_id>", methods=["GET", "OPTIONS"])

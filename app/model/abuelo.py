@@ -10,7 +10,7 @@ class AbueloModel(Base):
     nombre = Column(String, nullable=False)
     edad = Column(Integer, nullable=True)
     descripcion = Column(String, nullable=True)
-    preferencias = Column(JSON, nullable=True)
+    preferencias = Column(String, nullable=True)
     frecuencia_update = Column(String, nullable=True)
     movilidad = Column(String, nullable=True)
 
