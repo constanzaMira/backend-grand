@@ -8,12 +8,10 @@ def crear_abuelo(credencial_id, nombre, edad=None, descripcion=None,
         nuevo = AbueloModel(
             credencial_id=credencial_id,
             nombre=nombre,
-            apellido=apellido,
             edad=edad,
             descripcion=descripcion,
             preferencias=preferencias,
             frecuencia_update=frecuencia_update,
-            ubicacion=ubicacion,
             movilidad=movilidad
         )
         db.add(nuevo)
@@ -25,7 +23,6 @@ def crear_abuelo(credencial_id, nombre, edad=None, descripcion=None,
                 "id": nuevo.id,
                 "nombre": nuevo.nombre,
                 "edad": nuevo.edad,
-                "ubicacion": nuevo.ubicacion,
                 "movilidad": nuevo.movilidad
             }
         }, 201
@@ -47,7 +44,6 @@ def obtener_abuelo_por_id(abuelo_id):
             "descripcion": abuelo.descripcion,
             "preferencias": abuelo.preferencias,
             "frecuencia_update": abuelo.frecuencia_update,
-            "ubicacion": abuelo.ubicacion,
             "movilidad": abuelo.movilidad,
             "credencial_id": abuelo.credencial_id
         }, 200

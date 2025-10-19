@@ -16,12 +16,11 @@ def handle_crear_abuelo():
     descripcion = data.get("descripcion") #prompt
     preferencias = data.get("preferencias")
     frecuencia_update = data.get("frecuencia_update")
-    ubicacion = data.get("ubicacion")
     movilidad = data.get("movilidad")
 
     response, status = crear_abuelo(
         credencial_id, nombre, edad, descripcion,
-        preferencias, frecuencia_update, ubicacion, movilidad
+        preferencias, frecuencia_update, movilidad
     )
     return jsonify(response), status
 
