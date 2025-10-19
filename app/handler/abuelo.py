@@ -9,7 +9,7 @@ def handle_crear_abuelo():
     credencial_id = data.get("credencial_id")
     nombre = data.get("nombre")
 
-    if not all([credencial_id, nombre, apellido]):
+    if not all([credencial_id, nombre]):
         return jsonify({"error": "Faltan campos obligatorios"}), 400
 
     edad = data.get("edad")
@@ -20,7 +20,7 @@ def handle_crear_abuelo():
     movilidad = data.get("movilidad")
 
     response, status = crear_abuelo(
-        credencial_id, nombre, apellido, edad, descripcion,
+        credencial_id, nombre, edad, descripcion,
         preferencias, frecuencia_update, ubicacion, movilidad
     )
     return jsonify(response), status
