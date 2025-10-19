@@ -138,17 +138,18 @@ def generar_contenido_spotify(credencial_id, descripcion):
 
     db = SessionLocal()
     try:
-
+        # 🧠 Prompt para generar títulos de podcasts (episodios)
         prompt_spotify = (
-            "Eres un asistente que recomienda  podcasts de Spotify para adultos mayores. "
-            "Tu objetivo es analizar la descripción del usuario y sugerir exactamente 5 títulos de podcasts "
-            "que podrían gustarle, sin incluir enlaces, sin explicaciones y uno por línea. "
-            "Debes entender el gusto musical y temático del usuario, su edad, época y estilo preferido."
+            "Eres un asistente que recomienda episodios de podcasts de Spotify para adultos mayores. "
+            "Tu objetivo es analizar la descripción del usuario y sugerir exactamente 5 títulos de episodios de podcasts "
+            "que podrían resultarle interesantes o útiles, sin incluir enlaces ni explicaciones y uno por línea. "
+            "Debes tener en cuenta los intereses, edad, experiencias de vida y temas afines a su generación, "
             "como salud, bienestar, historias, cultura, humor o aprendizaje."
         )
 
-        prompt_spotify = f"{prompt_spotify}\n\n{descripcion}\n\nResponde unicamente con 5 títulos podcast posibles."
+        prompt_spotify = f"{prompt_spotify}\n\n{descripcion}\n\nResponde únicamente con 5 títulos de episodios posibles."
 
+        # 🔹 Generar sugerencias con Gemini
         client = genai.Client(api_key=GEMINI_API_KEY)
         response = client.models.generate_content(
             model="gemini-2.0-flash",
@@ -158,6 +159,7 @@ def generar_contenido_spotify(credencial_id, descripcion):
         titles_raw = response.text.strip()
         titles = [line.strip("•*- ").strip() for line in titles_raw.splitlines() if line.strip()]
 
+        # 🔹 Obtener token de Spotify
         def obtener_token_spotify():
             url = "https://accounts.spotify.com/api/token"
             data = {"grant_type": "client_credentials"}
@@ -168,38 +170,42 @@ def generar_contenido_spotify(credencial_id, descripcion):
 
         token_spotify = obtener_token_spotify()
 
+        # 🔹 Buscar solo episodios reproducibles
         def buscar_en_spotify(query):
             url = "https://api.spotify.com/v1/search"
             headers = {"Authorization": f"Bearer {token_spotify}"}
-            params = {"q": query, "type": "track", "limit": 1}
+            params = {"q": query, "type": "episode", "limit": 1, "market": "AR"}
             r = requests.get(url, headers=headers, params=params)
             data = r.json()
-            if "tracks" in data and data["tracks"]["items"]:
-                item = data["tracks"]["items"][0]
+
+            if "episodes" in data and data["episodes"]["items"]:
+                ep = data["episodes"]["items"][0]
+                ep_id = ep["id"]
+                embed_url = f"https://open.spotify.com/embed/episode/{ep_id}"
                 return {
-                    "titulo": item["name"],
-                    "url": item["external_urls"]["spotify"],
-                    "artista": item["artists"][0]["name"]
+                    "titulo": ep["name"],
+                    "url": embed_url,  # ✅ formato embebido listo para el frontend
+                    "artista": ep["show"]["name"]
                 }
             return None
 
         resultados = []
         for t in titles:
-            track = buscar_en_spotify(t)
-            if track:
+            episodio = buscar_en_spotify(t)
+            if episodio:
                 nuevo = ContenidoModel(
                     credencial_id=credencial_id,
                     plataforma="Spotify",
-                    titulo=track["titulo"],
-                    url=track["url"]
+                    titulo=episodio["titulo"],
+                    url=episodio["url"]
                 )
                 db.add(nuevo)
-                resultados.append(track)
+                resultados.append(episodio)
 
         db.commit()
 
         return {
-            "message": "Contenido de Spotify generado correctamente",
+            "message": "Contenido de Spotify (episodios) generado correctamente",
             "resultados": resultados
         }, 201
 
@@ -208,6 +214,7 @@ def generar_contenido_spotify(credencial_id, descripcion):
         return {"error": f"Error al generar contenido Spotify: {str(e)}"}, 500
     finally:
         db.close()
+
 
 def eliminar_contenido_por_id(contenido_id):
     db = SessionLocal()
