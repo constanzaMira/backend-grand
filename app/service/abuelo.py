@@ -1,7 +1,7 @@
 from app.model.abuelo import AbueloModel
 from app.database.connections import SessionLocal
 
-def crear_abuelo(credencial_id, nombre, apellido, edad=None, descripcion=None,
+def crear_abuelo(credencial_id, nombre, edad=None, descripcion=None,
                  preferencias=None, frecuencia_update=None, ubicacion=None, movilidad=None):
     db = SessionLocal()
     try:
