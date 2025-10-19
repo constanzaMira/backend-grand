@@ -2,11 +2,10 @@ from flask import request, jsonify
 from app.service.contenido import (
     generar_contenido_para_abuelo,
     obtener_contenidos_por_usuario,
-    generar_contenido_spotify
+    generar_contenido_spotify,
+    eliminar_contenido_por_id
 )
 from app.service.abuelo import obtener_abuelo_por_credencial_id
-
-
 
 def handle_generar_contenido(credencial_id):
 
@@ -39,4 +38,8 @@ def handle_generar_contenido_spotify(credencial_id):
         return jsonify({"error": "El abuelo no tiene una descripción registrada"}), 400
 
     response, status = generar_contenido_spotify(credencial_id, descripcion)
+    return jsonify(response), status
+
+def handle_eliminar_contenido(contenido_id):
+    response, status = eliminar_contenido_por_id(contenido_id)
     return jsonify(response), status

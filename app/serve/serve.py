@@ -9,9 +9,9 @@ from app.handler.contenido import (
     handle_generar_contenido,
     handle_listar_contenidos_por_usuario,
     handle_marcar_click,
-    handle_generar_contenido_spotify
+    handle_generar_contenido_spotify,
+    handle_eliminar_contenido
 )
-
 
 # from app.service.auth import token_required
 
@@ -64,3 +64,8 @@ def marcar_click(credencial_id, contenido_id):
 @cross_origin(supports_credentials=True)
 def generar_contenido_spotify(credencial_id):
     return handle_generar_contenido_spotify(credencial_id)
+
+@routes.route("/backend/contenidos/<int:contenido_id>", methods=["DELETE", "OPTIONS"])
+@cross_origin(supports_credentials=True)
+def eliminar_contenido(contenido_id):
+    return handle_eliminar_contenido(contenido_id)

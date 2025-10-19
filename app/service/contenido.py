@@ -208,3 +208,22 @@ def generar_contenido_spotify(credencial_id, descripcion):
         return {"error": f"Error al generar contenido Spotify: {str(e)}"}, 500
     finally:
         db.close()
+
+def eliminar_contenido_por_id(contenido_id):
+    db = SessionLocal()
+    try:
+        contenido = db.query(ContenidoModel).filter(ContenidoModel.id == contenido_id).first()
+
+        if not contenido:
+            return {"error": "No se encontró contenido con ese ID"}, 404
+
+        db.delete(contenido)
+        db.commit()
+
+        return {"message": f"Contenido con ID {contenido_id} eliminado correctamente"}, 200
+
+    except Exception as e:
+        db.rollback()
+        return {"error": f"Error al eliminar contenido: {str(e)}"}, 500
+    finally:
+        db.close()
