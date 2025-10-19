@@ -5,17 +5,12 @@ from app.model.contenido import ContenidoModel
 from app.database.connections import SessionLocal
 
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
-
-client = genai.Client(api_key=GEMINI_API_KEY)
-
 
 def generar_contenido_para_abuelo(credencial_id, descripcion):
-    """
-    Usa Gemini para generar sugerencias de videos y luego busca los links reales en YouTube.
-    Guarda cada video como un registro separado en la base de datos.
-    """
+    GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+    YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
+
+    client = genai.Client(api_key=GEMINI_API_KEY)
     db = SessionLocal()
     try:
         # 1️⃣ Prompt fijo + descripción del abuelo
