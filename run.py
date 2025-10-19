@@ -4,7 +4,7 @@ from app.database.connections import engine, Base
 
 from app.model.abuelo import AbueloModel
 from app.model.contenido import ContenidoModel
-from app.model.admin import AdminModel
+from app.model.credenciales import CredencialModel
 
 Base.metadata.create_all(bind=engine)
 

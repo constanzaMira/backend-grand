@@ -1,26 +1,19 @@
-from datetime import datetime
-from sqlalchemy import Column, String, DateTime, JSON, ForeignKey, Table,Integer
+from sqlalchemy import Column, Integer, String, ForeignKey, JSON
 from sqlalchemy.orm import relationship
 from app.database.connections import Base
-
-abuelo_contenido = Table(
-    "abuelo_contenido",
-    Base.metadata,
-    Column("abuelo_email", String, ForeignKey("abuelos.email"), primary_key=True),
-    Column("contenido_id", Integer, ForeignKey("contenidos.id"), primary_key=True) 
-)
-
 
 class AbueloModel(Base):
     __tablename__ = "abuelos"
 
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    credencial_id = Column(Integer, ForeignKey("credenciales.id"), nullable=False)
     nombre = Column(String, nullable=False)
     apellido = Column(String, nullable=False)
-    email = Column(String, unique=True, nullable=False, primary_key=True)
-    contrasena = Column(String, nullable=True)
-    creador_email = Column(String, ForeignKey("admins.email"), nullable=False)
+    edad = Column(Integer, nullable=True)
+    descripcion = Column(String, nullable=True)
     preferencias = Column(JSON, nullable=True)
-    fecha_creacion = Column(DateTime, default=datetime.utcnow)
+    frecuencia_update = Column(String, nullable=True)
+    ubicacion = Column(String, nullable=True)
+    movilidad = Column(String, nullable=True)
 
-    creador = relationship("AdminModel", back_populates="abuelos")
-    contenidos = relationship("ContenidoModel", secondary=abuelo_contenido, back_populates="abuelos")
+    credencial = relationship("CredencialModel", back_populates="abuelo")

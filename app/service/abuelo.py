@@ -1,66 +1,57 @@
-from app.database.connections import SessionLocal
 from app.model.abuelo import AbueloModel
-from app.model.contenido import ContenidoModel
+from app.database.connections import SessionLocal
 
-def crear_abuelo(data):
+def crear_abuelo(credencial_id, nombre, apellido, edad=None, descripcion=None,
+                 preferencias=None, frecuencia_update=None, ubicacion=None, movilidad=None):
     db = SessionLocal()
     try:
-        abuelo = AbueloModel(
-            nombre=data["nombre"],
-            apellido=data["apellido"],
-            email=data["email"],
-            contrasena=data.get("contrasena"),
-            creador_email=data["creador_email"],
-            preferencias=data.get("preferencias", {})
+        nuevo = AbueloModel(
+            credencial_id=credencial_id,
+            nombre=nombre,
+            apellido=apellido,
+            edad=edad,
+            descripcion=descripcion,
+            preferencias=preferencias,
+            frecuencia_update=frecuencia_update,
+            ubicacion=ubicacion,
+            movilidad=movilidad
         )
-        db.add(abuelo)
+        db.add(nuevo)
         db.commit()
-        db.refresh(abuelo)
-        return abuelo
-    except Exception as e:
-        db.rollback()
-        print("Error al crear abuelo:", e)
-        return None
+        db.refresh(nuevo)
+        return {
+            "message": "Abuelo creado correctamente",
+            "abuelo": {
+                "id": nuevo.id,
+                "nombre": nuevo.nombre,
+                "apellido": nuevo.apellido,
+                "edad": nuevo.edad,
+                "ubicacion": nuevo.ubicacion,
+                "movilidad": nuevo.movilidad
+            }
+        }, 201
     finally:
         db.close()
 
 
-def listar_abuelos():
+def obtener_abuelo_por_id(abuelo_id):
     db = SessionLocal()
     try:
-        return db.query(AbueloModel).all()
-    except Exception as e:
-        print("Error al listar abuelos:", e)
-        return []
-    finally:
-        db.close()
+        abuelo = db.query(AbueloModel).filter(AbueloModel.id == abuelo_id).first()
+        if not abuelo:
+            return {"error": "Abuelo no encontrado"}, 404
 
-
-def obtener_abuelo(email):
-    db = SessionLocal()
-    try:
-        return db.query(AbueloModel).filter_by(email=email).first()
-    except Exception as e:
-        print("Error al obtener abuelo:", e)
-        return None
-    finally:
-        db.close()
-
-
-def asociar_contenido_a_abuelo(email, contenido_id):
-    db = SessionLocal()
-    try:
-        abuelo = db.query(AbueloModel).filter_by(email=email).first()
-        contenido = db.query(ContenidoModel).filter_by(id=contenido_id).first()
-        if not abuelo or not contenido:
-            return None
-        abuelo.contenidos.append(contenido)
-        db.commit()
-        db.refresh(abuelo)
-        return abuelo
-    except Exception as e:
-        db.rollback()
-        print("Error al asociar contenido:", e)
-        return None
+        return {
+            "id": abuelo.id,
+            "nombre": abuelo.nombre,
+            "apellido": abuelo.apellido,
+            "edad": abuelo.edad,
+            "descripcion": abuelo.descripcion,
+            "preferencias": abuelo.preferencias,
+            "frecuencia_update": abuelo.frecuencia_update,
+            "ubicacion": abuelo.ubicacion,
+            "movilidad": abuelo.movilidad,
+            "credencial_id": abuelo.credencial_id
+        }, 200
     finally:
         db.close()

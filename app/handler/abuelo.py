@@ -1,53 +1,31 @@
 from flask import request, jsonify
-from app.service.abuelo import crear_abuelo, listar_abuelos, obtener_abuelo, asociar_contenido_a_abuelo
+from app.service.abuelo import (
+    crear_abuelo,
+    obtener_abuelo_por_id
+)
 
 def handle_crear_abuelo():
     data = request.get_json()
-    if not data or "email" not in data or "creador_email" not in data:
+    credencial_id = data.get("credencial_id")
+    nombre = data.get("nombre")
+    apellido = data.get("apellido")
+
+    if not all([credencial_id, nombre, apellido]):
         return jsonify({"error": "Faltan campos obligatorios"}), 400
 
-    abuelo = crear_abuelo(data)
-    if not abuelo:
-        return jsonify({"error": "No se pudo crear el abuelo"}), 400
+    edad = data.get("edad")
+    descripcion = data.get("descripcion")
+    preferencias = data.get("preferencias")
+    frecuencia_update = data.get("frecuencia_update")
+    ubicacion = data.get("ubicacion")
+    movilidad = data.get("movilidad")
 
-    return jsonify({
-        "nombre": abuelo.nombre,
-        "apellido": abuelo.apellido,
-        "email": abuelo.email,
-        "creador_email": abuelo.creador_email,
-        "preferencias": abuelo.preferencias or {}
-    }), 201
+    response, status = crear_abuelo(
+        credencial_id, nombre, apellido, edad, descripcion,
+        preferencias, frecuencia_update, ubicacion, movilidad
+    )
+    return jsonify(response), status
 
-
-def handle_listar_abuelos():
-    abuelos = listar_abuelos()
-    return jsonify([
-        {
-            "nombre": a.nombre,
-            "apellido": a.apellido,
-            "email": a.email,
-            "creador_email": a.creador_email,
-            "preferencias": a.preferencias or {}
-        } for a in abuelos
-    ])
-
-
-def handle_obtener_abuelo(email):
-    abuelo = obtener_abuelo(email)
-    if not abuelo:
-        return jsonify({"error": "Abuelo no encontrado"}), 404
-
-    return jsonify({
-        "nombre": abuelo.nombre,
-        "apellido": abuelo.apellido,
-        "email": abuelo.email,
-        "creador_email": abuelo.creador_email,
-        "preferencias": abuelo.preferencias or {}
-    })
-
-
-def handle_asociar_contenido(email, contenido_id):
-    abuelo = asociar_contenido_a_abuelo(email, contenido_id)
-    if not abuelo:
-        return jsonify({"error": "No se pudo asociar el contenido"}), 400
-    return jsonify({"message": f"Contenido {contenido_id} asociado correctamente a {email}."})
+def handle_obtener_abuelo_por_id(abuelo_id):
+    response, status = obtener_abuelo_por_id(abuelo_id)
+    return jsonify(response), status

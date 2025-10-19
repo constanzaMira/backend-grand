@@ -1,49 +1,53 @@
 from flask import Blueprint
 from flask_cors import cross_origin
+from app.handler.credenciales import handle_signup, handle_login
 from app.handler.abuelo import (
     handle_crear_abuelo,
-    handle_listar_abuelos,
-    handle_obtener_abuelo,
-    handle_asociar_contenido
+    handle_obtener_abuelo_por_id
 )
-from app.handler.admin import handle_crear_admin, handle_login_admin
-from app.service.auth import token_required
+from app.handler.contenido import (
+    handle_crear_contenido,
+    handle_listar_contenidos_por_usuario
+)
+
+# from app.service.auth import token_required
 
 routes = Blueprint("routes", __name__)
 
 @routes.route("/")
 def home():
-    return "API de Abuelos funcionando"
+    return "API Backend funcionando correctamente"
+
+@routes.route("/backend/signup", methods=["POST", "OPTIONS"])
+@cross_origin(supports_credentials=True)
+def signup():
+    return handle_signup()
+
+@routes.route("/backend/login", methods=["POST", "OPTIONS"])
+@cross_origin(supports_credentials=True)
+def login():
+    return handle_login()
 
 @routes.route("/backend/abuelos", methods=["POST", "OPTIONS"])
 @cross_origin(supports_credentials=True)
-@token_required
+# @token_required 
 def crear_abuelo():
     return handle_crear_abuelo()
 
-@routes.route("/backend/abuelos", methods=["GET", "OPTIONS"])
+@routes.route("/backend/abuelos/<int:abuelo_id>", methods=["GET", "OPTIONS"])
 @cross_origin(supports_credentials=True)
-@token_required
-def listar_abuelos():
-    return handle_listar_abuelos()
+# @token_required
+def obtener_abuelo_por_id(abuelo_id):
+    return handle_obtener_abuelo_por_id(abuelo_id)
 
-@routes.route("/backend/abuelos/<email>", methods=["GET", "OPTIONS"])
+@routes.route("/backend/contenidos", methods=["POST", "OPTIONS"])
 @cross_origin(supports_credentials=True)
-def obtener_abuelo(email):
-    return handle_obtener_abuelo(email)
+# @token_required
+def crear_contenido():
+    return handle_crear_contenido()
 
-@routes.route("/backend/abuelos/<email>/contenidos/<int:contenido_id>", methods=["POST", "OPTIONS"])
+@routes.route("/backend/contenidos/<int:credencial_id>", methods=["GET", "OPTIONS"])
 @cross_origin(supports_credentials=True)
-@token_required
-def asociar_contenido(email, contenido_id):
-    return handle_asociar_contenido(email, contenido_id)
-
-@routes.route("/backend/admins/signup", methods=["POST", "OPTIONS"])
-@cross_origin(supports_credentials=True)
-def crear_admin():
-    return handle_crear_admin()
-
-@routes.route("/backend/admins/login", methods=["POST", "OPTIONS"])
-@cross_origin(supports_credentials=True)
-def login_admin():
-    return handle_login_admin()
+# @token_required
+def listar_contenidos_por_usuario(credencial_id):
+    return handle_listar_contenidos_por_usuario(credencial_id)
