@@ -8,8 +8,10 @@ from app.handler.abuelo import (
 from app.handler.contenido import (
     handle_generar_contenido,
     handle_listar_contenidos_por_usuario,
-    handle_marcar_click
+    handle_marcar_click,
+    handle_generar_contenido_spotify
 )
+
 
 # from app.service.auth import token_required
 
@@ -58,3 +60,7 @@ def listar_contenidos_por_usuario(credencial_id):
 def marcar_click(credencial_id, contenido_id):
     return handle_marcar_click(credencial_id, contenido_id)
 
+@routes.route("/backend/contenidos/generar_spotify/<int:credencial_id>", methods=["POST", "OPTIONS"])
+@cross_origin(supports_credentials=True)
+def generar_contenido_spotify(credencial_id):
+    return handle_generar_contenido_spotify(credencial_id)

@@ -3,7 +3,7 @@ import requests
 from google import genai
 from app.model.contenido import ContenidoModel
 from app.database.connections import SessionLocal
-
+from requests.auth import HTTPBasicAuth
 
 
 def generar_contenido_para_abuelo(credencial_id, descripcion):
@@ -76,7 +76,6 @@ def generar_contenido_para_abuelo(credencial_id, descripcion):
         db.close()
 
 
-
 def obtener_contenidos_por_usuario(credencial_id):
     db = SessionLocal()
     try:
@@ -120,8 +119,8 @@ def marcar_contenido_como_click(credencial_id, contenido_id):
             "message": "Contenido marcado como clickeado correctamente",
             "contenido": {
                 "id": contenido.id,
-                "titulo": getattr(contenido, "titulos", None),
-                "url": getattr(contenido, "urls", None),
+                "titulo": getattr(contenido, "titulo", None),
+                "url": getattr(contenido, "url", None),
                 "click": contenido.click
             }
         }, 200
@@ -129,5 +128,83 @@ def marcar_contenido_como_click(credencial_id, contenido_id):
     except Exception as e:
         db.rollback()
         return {"error": f"Error al actualizar click: {str(e)}"}, 500
+    finally:
+        db.close()
+
+def generar_contenido_spotify(credencial_id, descripcion):
+    GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+    SPOTIFY_CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
+    SPOTIFY_CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
+
+    db = SessionLocal()
+    try:
+
+        prompt_spotify = (
+            "Eres un asistente que recomienda podcasts de Spotify para adultos mayores. "
+            "Tu objetivo es analizar la descripción del usuario y sugerir títulos de podcasts "
+            "que podrían resultarle interesantes o útiles, sin incluir enlaces ni explicaciones y uno por línea. "
+            "Debes tener en cuenta los intereses, edad, experiencias de vida y temas afines a su generación, "
+            "como salud, historias, cultura, humor o aprendizaje. "
+            "Responde con 5 títulos de podcasts posibles."
+        )
+        prompt_spotify = f"{prompt_spotify}\n\n{descripcion}\n\nResponde con 5 títulos de canciones o playlists posibles."
+
+        client = genai.Client(api_key=GEMINI_API_KEY)
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=prompt_spotify
+        )
+
+        titles_raw = response.text.strip()
+        titles = [line.strip("•*- ").strip() for line in titles_raw.splitlines() if line.strip()]
+
+        def obtener_token_spotify():
+            url = "https://accounts.spotify.com/api/token"
+            data = {"grant_type": "client_credentials"}
+            auth = HTTPBasicAuth(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET)
+            r = requests.post(url, data=data, auth=auth)
+            r.raise_for_status()
+            return r.json()["access_token"]
+
+        token_spotify = obtener_token_spotify()
+
+        def buscar_en_spotify(query):
+            url = "https://api.spotify.com/v1/search"
+            headers = {"Authorization": f"Bearer {token_spotify}"}
+            params = {"q": query, "type": "track", "limit": 1}
+            r = requests.get(url, headers=headers, params=params)
+            data = r.json()
+            if "tracks" in data and data["tracks"]["items"]:
+                item = data["tracks"]["items"][0]
+                return {
+                    "titulo": item["name"],
+                    "url": item["external_urls"]["spotify"],
+                    "artista": item["artists"][0]["name"]
+                }
+            return None
+
+        resultados = []
+        for t in titles:
+            track = buscar_en_spotify(t)
+            if track:
+                nuevo = ContenidoModel(
+                    credencial_id=credencial_id,
+                    plataforma="Spotify",
+                    titulo=track["titulo"],
+                    url=track["url"]
+                )
+                db.add(nuevo)
+                resultados.append(track)
+
+        db.commit()
+
+        return {
+            "message": "Contenido de Spotify generado correctamente",
+            "resultados": resultados
+        }, 201
+
+    except Exception as e:
+        db.rollback()
+        return {"error": f"Error al generar contenido Spotify: {str(e)}"}, 500
     finally:
         db.close()
